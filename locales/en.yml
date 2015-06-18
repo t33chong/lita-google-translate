@@ -2,3 +2,12 @@ en:
   lita:
     handlers:
       google_translate:
+        help:
+          translate_key: "translate TEXT"
+          translate_value: "Translates TEXT to the default language."
+          translate_params_key: "translate(FROM:TO) TEXT"
+          translate_params_value: "Translates TEXT from FROM to TO. (FROM and TO are optional language codes)"
+          interpret_key: "interpret(FROM:TO) [TEXT]"
+          interpret_value: "Interprets your messages on the fly until you type !interpret. (FROM and TO are optional language codes)"
+          languages_key: "languages"
+          languages_value: "Sends a list of language codes supported by lita-google-translate."
