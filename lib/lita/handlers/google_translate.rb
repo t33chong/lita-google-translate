@@ -7,16 +7,24 @@ module Lita
       config :api_key, type: String, required: true
       config :default_language, type: String, default: "en"
 
-      route(/^t(?:ranslate)?(?:[\[\(](?:(?<from>[\-[[:alpha:]]]*)[\:\>,]\s*)?(?<to>[\-[[:alpha:]]]*)[\]\)])?\s+(?<text>.+)/i,
-            :translate, command: true,
-            help: {t("help.translate_key") => t("help.translate_value")})
-      route(/^interpret(?:[\[\(](?:(?<from>[\-[[:alpha:]]]*)[\:\>,]\s*)?(?<to>[\-[[:alpha:]]]*)[\]\)])?(?:\s+(?<text>.+))?/i,
-            :interpret_start, command: true,
-            help: {t("help.interpret_key") => t("help.interpret_value")})
+      route(
+        /^t(?:ranslate)?(?:[\[\(](?:(?<from>[\-[[:alpha:]]]*)[\:\>,]\s*)?(?<to>[\-[[:alpha:]]]*)[\]\)])?\s+(?<text>.+)/i,
+        :translate, command: true, help: {
+          t("help.translate_key") => t("help.translate_value"),
+          t("help.translate_params_key") => t("help.translate_params_value")
+        }
+      )
+      route(
+        /^interpret(?:[\[\(](?:(?<from>[\-[[:alpha:]]]*)[\:\>,]\s*)?(?<to>[\-[[:alpha:]]]*)[\]\)])?(?:\s+(?<text>.+))?/i,
+        :interpret_start, command: true,
+        help: {t("help.interpret_key") => t("help.interpret_value")}
+      )
       route(/./, :interpret_monitor, command: false)
       route(/!interpret/i, :interpret_stop, command: false)
-      route(/^languages/i, :languages, command: true, help: {
-            t("help.languages_key") => t("help.languages_value")})
+      route(
+        /^languages/i, :languages, command: true,
+        help: {t("help.languages_key") => t("help.languages_value")}
+      )
 
       def initialize(robot)
         super
