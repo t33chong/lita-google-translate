@@ -18,12 +18,9 @@ module Lita
       route(/^languages/i, :languages, command: true, help: {
             t("help.languages_key") => t("help.languages_value")})
 
-      # TODO: Figure out why rspec doesn't pass the API key when ToLang.start is called here
       def initialize(robot)
         super
         @@codes = ToLang::CODEMAP.each_value.map {|v| v.downcase}.to_set
-        #ToLang.start(config.api_key)
-        #@@connector = ToLang.connector
       end
 
       def translate(response)
@@ -75,11 +72,8 @@ module Lita
       end
 
       def get_translation(from, to, text)
-        ToLang.start(config.api_key)  # Temporary
+        ToLang.start(config.api_key)
         falsy(from) ? text.translate(to) : text.translate(to, :from => from)
-
-        #falsy(from) ? text.translate(to, :debug => :request).to_s : text.translate(to, :from => from, :debug => :request).to_s
-        #falsy(from) ? @@connector.request(text, to, :debug => :request) : @@connector.request(text, to, :from => from, :debug => :request)
       end
 
       def format_error(code)
