@@ -94,7 +94,7 @@ Hindi | `hi`
 Hungarian | `hu`
 Icelandic | `is`
 Indonesian | `id`
-Irish | `ga`
+Irish (Gaelic) | `ga`
 Italian | `it`
 Japanese | `ja`
 Latvian | `lv`
@@ -103,7 +103,7 @@ Macedonian | `mk`
 Malay | `ms`
 Maltese | `mt`
 Norwegian | `no`
-Persian | `fa`
+Persian (Farsi) | `fa`
 Polish | `pl`
 Portuguese | `pt`
 Romanian | `ro`
