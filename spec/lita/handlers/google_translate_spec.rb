@@ -16,7 +16,6 @@ describe Lita::Handlers::GoogleTranslate, lita_handler: true do
   it { is_expected.to route_command("t() hola").to(:translate) }
   it { is_expected.to route_command("interpret(es:en)").to(:interpret_start) }
   it { is_expected.to route_command("interpret(es:en) hola").to(:interpret_start) }
-  it { is_expected.to route("hola").to(:interpret_monitor) }
   it { is_expected.to route("!interpret").to(:interpret_stop) }
   it { is_expected.to route_command("languages").to(:languages) }
 
@@ -33,7 +32,7 @@ describe Lita::Handlers::GoogleTranslate, lita_handler: true do
       it "translates with TO parameter" do
         send_command "translate(EL) hello"
         expect(replies.count).to eq 1
-        expect(replies.first).to match "Γεια σας"
+        expect(replies.first).to match "Χαίρετε"
       end
 
       it "translates with TO and FROM parameters" do
@@ -51,13 +50,13 @@ describe Lita::Handlers::GoogleTranslate, lita_handler: true do
       it "responds with an error message when an invalid source language is given" do
         send_command "translate(asdf:en) hej"
         expect(replies.count).to eq 1
-        expect(replies.first).to match /^'asdf' is not a valid language code\. For available languages, send me the command: languages$/
+        expect(replies.first).to match /^'asdf' is not a valid language code\. A full list of supported languages can be found at https:\/\/github\.com\/tristaneuan\/lita-google-translate#supported-languages$/
       end
 
       it "responds with an error message when an invalid target language is given" do
         send_command "translate(es:hjkl) hola"
         expect(replies.count).to eq 1
-        expect(replies.first).to match /^'hjkl' is not a valid language code\. For available languages, send me the command: languages$/
+        expect(replies.first).to match /^'hjkl' is not a valid language code\. A full list of supported languages can be found at https:\/\/github\.com\/tristaneuan\/lita-google-translate#supported-languages$/
       end
 
     end
@@ -77,7 +76,7 @@ describe Lita::Handlers::GoogleTranslate, lita_handler: true do
       it "responds with an error message when an invalid language is given" do
         send_command "interpret(asdf)"
         expect(replies.count).to eq 1
-        expect(replies.first).to match /^'asdf' is not a valid language code\. For available languages, send me the command: languages$/
+        expect(replies.first).to match /^'asdf' is not a valid language code\. A full list of supported languages can be found at https:\/\/github\.com\/tristaneuan\/lita-google-translate#supported-languages$/
       end
 
       after(:each) do
@@ -129,7 +128,7 @@ describe Lita::Handlers::GoogleTranslate, lita_handler: true do
     it "responds with a list of languages and their codes" do
       send_command "languages"
       expect(replies.count).to eq 1
-      expect(replies.first).to match /^afrikaans: af\nalbanian: sq\n/
+      expect(replies.first).to match /^A full list of supported languages can be found at https:\/\/github\.com\/tristaneuan\/lita-google-translate#supported-languages/
     end
 
   end

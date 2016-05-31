@@ -2,6 +2,7 @@ en:
   lita:
     handlers:
       google_translate:
+        invalid_language: "'%{code}' is not a valid language code. A full list of supported languages can be found at %{url}"
         help:
           translate_key: "translate TEXT"
           translate_value: "Translates TEXT to the default language."
@@ -11,3 +12,4 @@ en:
           interpret_value: "Interprets your messages on the fly until you type !interpret. (FROM and TO are optional language codes)"
           languages_key: "languages"
           languages_value: "Sends a list of language codes supported by lita-google-translate."
+        languages: "A full list of supported languages can be found at %{url}"
