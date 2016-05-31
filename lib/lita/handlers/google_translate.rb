@@ -3,6 +3,7 @@ require "to_lang"
 module Lita
   module Handlers
     class GoogleTranslate < Handler
+      README = "https://github.com/tristaneuan/lita-google-translate#supported-languages"
 
       config :api_key, type: String, required: true
       config :default_language, type: String, default: "en"
@@ -19,12 +20,13 @@ module Lita
         :interpret_start, command: true,
         help: {t("help.interpret_key") => t("help.interpret_value")}
       )
-      route(/./, :interpret_monitor, command: false)
       route(/!interpret/i, :interpret_stop, command: false)
       route(
         /^languages/i, :languages, command: true,
         help: {t("help.languages_key") => t("help.languages_value")}
       )
+
+      on :message_received, :interpret_monitor
 
       def initialize(robot)
         super
@@ -32,30 +34,30 @@ module Lita
       end
 
       def translate(response)
-        begin
-          response.reply get_translation(*parse_command(response.match_data))
-        rescue InvalidLanguage => e
-          response.reply format_error(e.message)
-        end
+        response.reply get_translation(*parse_command(response.match_data))
+      rescue InvalidLanguage => e
+        response.reply t("invalid_language", code: e.message, url: README)
       end
 
       def interpret_start(response)
-        begin
-          from, to, text = parse_command(response.match_data)
-          redis.set("#{response.user.id}:from", from)
-          redis.set("#{response.user.id}:to", to)
-          response.reply get_translation(from, to, text) unless text.nil?
-        rescue InvalidLanguage => e
-          response.reply format_error(e.message)
-        end
+        from, to, text = parse_command(response.match_data)
+        redis.set("#{response.user.id}:from", from)
+        redis.set("#{response.user.id}:to", to)
+        response.reply get_translation(from, to, text) unless text.nil?
+      rescue InvalidLanguage => e
+        response.reply t("invalid_language", code: e.message, url: README)
       end
 
-      def interpret_monitor(response)
-        return if response.message.body.include?("!interpret")
-        to = redis.get("#{response.user.id}:to")
-        unless to.nil? || response.message.command?
-          from = redis.get("#{response.user.id}:from")
-          response.reply get_translation(from, to, response.message.body)
+      def interpret_monitor(payload)
+        message = payload[:message]
+        source = message.source
+        user = source.user
+
+        return if message.body.include?("!interpret")
+        to = redis.get("#{user.id}:to")
+        unless to.nil? || message.command?
+          from = redis.get("#{user.id}:from")
+          robot.send_messages(source, get_translation(from, to, message.body))
         end
       end
 
@@ -65,7 +67,7 @@ module Lita
       end
 
       def languages(response)
-        response.reply_privately ToLang::CODEMAP.each.map {|k,v| "#{k}: #{v}"}.join("\n")
+        response.reply t("languages", url: README)
       end
 
       private
@@ -82,10 +84,6 @@ module Lita
       def get_translation(from, to, text)
         ToLang.start(config.api_key)
         falsy(from) ? text.translate(to) : text.translate(to, :from => from)
-      end
-
-      def format_error(code)
-        "'#{code}' is not a valid language code. For available languages, send me the command: languages"
       end
 
       def falsy(code)
